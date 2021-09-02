@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
+
 @Service
 public class ExchangeBCServiceImpl implements IExchangeBCService {
 
@@ -61,7 +63,7 @@ public class ExchangeBCServiceImpl implements IExchangeBCService {
                 log.info("No se puede hacer un deposito, no existe la cuenta de BootCoin");
                 return Mono.just(ExchangeDocument.builder().build());
             }
-            exchangeDocument.setState("PENDING");
+
             exchangeDocument.setTypeOfAccountSeller(c.getTypeOfAccount());
             exchangeDocument.setOwnerBCSeller(c.getOwnerBootCoin());
             exchangeDocument.setNroPhoneSeller(c.getNroPhone());
@@ -76,7 +78,26 @@ public class ExchangeBCServiceImpl implements IExchangeBCService {
     }
 
     @Override
-    public Mono<ExchangeDocument> updateExchange(String id, ExchangeDocument exchangeDocument) {
-        return null;
+    public Mono<ExchangeDocument> takeEnchage(String id, ExchangeDocument exchangeDocument) {
+        return exchangeBCRepository.findById(id).flatMap(c -> {
+            System.out.println(c);
+
+            return bootCoinDtoServices.findByCustomerIdentityNumber(exchangeDocument.getCustomerIdentityNumberBuyer()).flatMap(d -> {
+                c.setOwnerBCBuyer(d.getOwnerBootCoin());
+                c.setNroPhoneBuyer(d.getNroPhone());
+                c.setTypeOfAccountBuyer(d.getTypeOfAccount());
+                c.setAmountBitCoinBuyer(c.getAmountBitCoinSeller());
+                c.setAmountPenBuyer(c.getAmountPenSeller());
+                c.setCustomerIdentityNumberBuyer(d.getCustomerIdentityNumber());
+                c.setFechaExchange(new Date());
+
+                d.setAmountBitCoin(d.getAmountBitCoin() + c.getAmountBitCoinSeller());
+
+                return bootCoinDtoServices.updateBootCoin(d).flatMap( e -> {
+
+                    return null;
+                });
+            });
+        });
     }
 }

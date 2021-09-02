@@ -1,4 +1,4 @@
-package com.springboot.exchange.msbootcoin.documents;
+package com.springboot.exchange.msbootcoin.documents.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,20 +6,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 
-@Document(collection = "exchange")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExchangeDocument {
+public class TransactionBCDocumentDto {
 
     @Id
     private String id;
+
+    private String state;
+
+    private Double amountExchangeBC;
+
+    private Double amountExchangePen;
 
     @Field(name = "typeOfAccountSeller")
     private String typeOfAccountSeller;
@@ -36,9 +40,9 @@ public class ExchangeDocument {
     @Field(name = "nroPhoneSeller")
     private String nroPhoneSeller;
 
-    private Double amountBitCoinSeller;
 
-    private Double amountPenSeller;
+    @Field(name = "typeOfAccountBuyer")
+    private String typeOfAccountBuyer;
 
     @Field(name = "customerIdentityNumberBuyer")
     @Indexed(unique = true)
@@ -52,12 +56,5 @@ public class ExchangeDocument {
     @Field(name = "nroPhoneBuyer")
     private String nroPhoneBuyer;
 
-    private Double amountBitCoinBuyer;
-
-    private Double amountPenBuyer;
-
-    @Field(name = "typeOfAccountBuyer")
-    private String typeOfAccountBuyer;
-
-    private Date fechaExchange;
+    private Date fechaTransaction;
 }

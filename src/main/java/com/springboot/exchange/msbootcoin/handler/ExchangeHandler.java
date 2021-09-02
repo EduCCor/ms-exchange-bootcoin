@@ -41,7 +41,7 @@ public class ExchangeHandler {
         Mono<ExchangeDocument> exchangeDocument = request.bodyToMono(ExchangeDocument.class);
         String id = request.pathVariable("id");
 
-        return exchangeDocument.flatMap(ebc -> exchangeBCService.updateExchange(id, ebc))
+        return exchangeDocument.flatMap(ebc -> exchangeBCService.takeEnchage(id, ebc))
                 .flatMap( c -> ServerResponse
                         .ok()
                         .contentType(MediaType.APPLICATION_JSON)

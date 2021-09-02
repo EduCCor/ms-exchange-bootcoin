@@ -7,6 +7,6 @@ public interface IExchangeBCService extends ICrudService<ExchangeDocument, Strin
 
     Mono<ExchangeDocument> createExchange (ExchangeDocument exchangeDocument);
 
-    Mono<ExchangeDocument> updateExchange (String id, ExchangeDocument exchangeDocument);
+    Mono<ExchangeDocument> takeEnchage (String id, ExchangeDocument exchangeDocument);
 
 }
