@@ -39,7 +39,7 @@ public class TransactionBCServiceImpl implements ITransactionBCService {
         return clientBuilder
                 .build()
                 .post()
-                .uri("http://localhost:8090/api/bootcoin/")
+                .uri("http://localhost:8092/api/transaction-bc")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(transactionDocument)

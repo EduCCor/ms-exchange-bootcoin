@@ -1,9 +1,11 @@
 package com.springboot.exchange.msbootcoin.services.Impl;
 
 import com.springboot.exchange.msbootcoin.documents.ExchangeDocument;
+import com.springboot.exchange.msbootcoin.documents.dto.TransactionBCDocumentDto;
 import com.springboot.exchange.msbootcoin.repositories.ExchangeBCRepository;
 import com.springboot.exchange.msbootcoin.services.IBootCoinDtoServices;
 import com.springboot.exchange.msbootcoin.services.IExchangeBCService;
+import com.springboot.exchange.msbootcoin.services.ITransactionBCService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ExchangeBCServiceImpl implements IExchangeBCService {
 
     @Autowired
     private IBootCoinDtoServices bootCoinDtoServices;
+
+    @Autowired
+    private ITransactionBCService transactionBCService;
 
     @Override
     public Mono<ExchangeDocument> create(ExchangeDocument o) {
@@ -94,8 +99,23 @@ public class ExchangeBCServiceImpl implements IExchangeBCService {
                 d.setAmountBitCoin(d.getAmountBitCoin() + c.getAmountBitCoinSeller());
 
                 return bootCoinDtoServices.updateBootCoin(d).flatMap( e -> {
+                    TransactionBCDocumentDto transactionDoc = new TransactionBCDocumentDto();
+                    transactionDoc.setState("PENDING");
+                    transactionDoc.setAmountExchangeBC(c.getAmountBitCoinSeller());
+                    transactionDoc.setAmountExchangePen(c.getAmountPenSeller());
+                    transactionDoc.setTypeOfAccountSeller(c.getTypeOfAccountSeller());
+                    transactionDoc.setCustomerIdentityNumberSeller(c.getCustomerIdentityNumberSeller());
+                    transactionDoc.setOwnerBCSeller(c.getOwnerBCSeller());
+                    transactionDoc.setNroPhoneSeller(c.getNroPhoneSeller());
+                    transactionDoc.setTypeOfAccountBuyer(c.getTypeOfAccountBuyer());
+                    transactionDoc.setCustomerIdentityNumberBuyer(c.getCustomerIdentityNumberBuyer());
+                    transactionDoc.setOwnerBCBuyer(c.getOwnerBCBuyer());
+                    transactionDoc.setNroPhoneBuyer(c.getNroPhoneBuyer());
+                    transactionDoc.setFechaTransaction(new Date());
 
-                    return null;
+                    return transactionBCService.createTransaction(transactionDoc).flatMap(f -> {
+                        return exchangeBCRepository.save(c);
+                    });
                 });
             });
         });
